@@ -58,29 +58,34 @@ const KEY="sb_publishable_nr2is68lmfKL49JRHN32EA_FwBuQyjH";
 const sb=supabase.createClient(URL,KEY);
 const $=x=>document.getElementById(x);
 function m(id,t,ok=false){$(id).textContent=t;$(id).className="msg "+(ok?"ok":"err")}
-async function login(){
-async function login(){
+async function login()
+}async function login(){
   alert("Login button clicked");
 
-  try{
-    let result = await sb.auth.signInWithPassword({
-      email: $("email").value,
+  try {
+    const result = await sb.auth.signInWithPassword({
+      email: $("email").value.trim(),
       password: $("password").value
     });
 
-    if(result.error){
+    if (result.error) {
       alert("ERROR: " + result.error.message);
       m("loginMsg", result.error.message);
       return;
     }
 
     alert("Login successful");
-    init();
+    await init();
 
-  }catch(e){
-    alert("CATCH ERROR: " + e.message);
-    m("loginMsg", e.message);
+  } catch (e) {
+    alert("CATCH ERROR: " + (e.message || e));
+    m("loginMsg", e.message || String(e));
   }
+}
+
+async function logout(){
+  await sb.auth.signOut();
+  location.reload();
 }
 
 async function init(){let {data:{user}}=await sb.auth.getUser();if(!user)return;let {data:p,error}=await sb.from("profiles").select("role").eq("id",user.id).single();if(error||!p||p.role!=="admin"){await sb.auth.signOut();m("loginMsg","This account is not an administrator.");return}$("login").classList.add("hidden");$("panel").classList.remove("hidden");loadDash();loadRadio()}
