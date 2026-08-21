@@ -55,10 +55,7 @@ body{font-family:Arial;margin:0;background:#f3fbff;color:#173042}header{backgrou
 <script>
 const URL="https://ilmnffzfjkmmrqoabpej.supabase.co";
 const KEY="sb_publishable_nr2is68lmfKL49JRHN32EA_FwBuQyjH";
-function m(id,t,ok=false){
-  $(id).textContent=t;
-  $(id).className="msg "+(ok?"ok":"err");
-}
+const sb=supabase.createClient(URL,KEY);
 
 async function login(){
   alert("Login button clicked");
