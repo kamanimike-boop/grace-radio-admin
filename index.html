@@ -1,78 +1,67 @@
-<!doctype html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Grace Radio Admin</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-body{font-family:Arial;margin:0;background:#f3fbff;color:#173042}header{background:#b8eafa;padding:18px;font-weight:800;font-size:22px}main{max-width:1050px;margin:auto;padding:20px}.card{background:white;padding:18px;border-radius:14px;margin:12px 0;box-shadow:0 3px 15px #0001}button{background:#1679a5;color:white;border:0;border-radius:9px;padding:11px 15px;font-weight:bold}input,textarea{width:100%;padding:10px;margin:6px 0 12px;border:1px solid #c8dce5;border-radius:8px;box-sizing:border-box}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.stat{font-size:30px;color:#1679a5;font-weight:bold}.tabs{display:flex;gap:7px;flex-wrap:wrap}.tabs button{background:white;color:#1679a5;border:1px solid #c8e8f4}.hidden{display:none}table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}th,td{text-align:left;padding:9px;border-bottom:1px solid #eee}.msg{margin:10px 0}.ok{color:green}.err{color:#b00}
-</style></head>
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Grace Radio Firebase Test</title>
+</head>
 <body>
-<header>🕊️ Grace Radio Admin</header>
-<main>
-<section id="login" class="card"><h2>Admin Login</h2>
-<label>Email</label><input id="email" type="email"><label>Password</label><input id="password" type="password">
-<button onclick="login()">Sign in</button><div id="loginMsg"></div></section>
 
-<section id="panel" class="hidden">
-<div class="tabs">
-<button onclick="tab('dash')">Dashboard</button><button onclick="tab('programs')">Programs</button>
-<button onclick="tab('podcasts')">Podcasts</button><button onclick="tab('books')">E-Books</button>
-<button onclick="tab('ads')">Ads</button><button onclick="tab('notifications')">Notifications</button>
-<button onclick="tab('orders')">Orders</button><button onclick="tab('radio')">Radio</button>
-<button onclick="logout()">Logout</button></div>
+<h2>Grace Radio Admin Login Test</h2>
 
-<div id="dash" class="view"><h2>Dashboard</h2><div class="grid">
-<div class="card"><small>Programs</small><div id="c1" class="stat">-</div></div>
-<div class="card"><small>Podcasts</small><div id="c2" class="stat">-</div></div>
-<div class="card"><small>E-books</small><div id="c3" class="stat">-</div></div>
-<div class="card"><small>Orders</small><div id="c4" class="stat">-</div></div></div></div>
+<input id="email" type="email" placeholder="Email">
+<br><br>
 
-<div id="programs" class="view hidden"><div class="card"><h2>Weekly Programs</h2><button onclick="loadPrograms()">Refresh</button><table><tbody id="programRows"></tbody></table></div></div>
+<input id="password" type="password" placeholder="Password">
+<br><br>
 
-<div id="podcasts" class="view hidden"><div class="card"><h2>Upload Podcast</h2>
-<input id="pt" placeholder="Podcast title"><input id="pc" placeholder="Category"><textarea id="pd" placeholder="Description"></textarea>
-<input id="pa" type="file" accept="audio/*"><input id="pi" type="file" accept="image/*"><button onclick="uploadPodcast()">Publish Podcast</button><div id="pm" class="msg"></div></div></div>
+<button onclick="login()">Login</button>
 
-<div id="books" class="view hidden"><div class="card"><h2>Upload E-Book</h2>
-<input id="bt" placeholder="Book title"><input id="ba" placeholder="Author"><input id="bp" type="number" placeholder="Price in KES">
-<textarea id="bd" placeholder="Description"></textarea><input id="bf" type="file" accept=".pdf,.epub,application/pdf,application/epub+zip"><input id="bi" type="file" accept="image/*">
-<button onclick="uploadBook()">Publish E-Book</button><div id="bm" class="msg"></div></div></div>
+<p id="msg"></p>
 
-<div id="ads" class="view hidden"><div class="card"><h2>Advertisement</h2>
-<input id="at" placeholder="Advertisement title"><input id="au" placeholder="Target URL (optional)"><input id="ai" type="file" accept="image/*">
-<button onclick="uploadAd()">Publish Advertisement</button><div id="am" class="msg"></div></div></div>
+<script type="module">
 
-<div id="notifications" class="view hidden"><div class="card"><h2>Notification</h2>
-<input id="nt" placeholder="Title"><textarea id="nb" placeholder="Message"></textarea><input id="ns" placeholder="Target screen (optional)">
-<button onclick="sendNotification()">Save Notification</button><div id="nm" class="msg"></div></div></div>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword }
+from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 
-<div id="orders" class="view hidden"><div class="card"><h2>Orders</h2><button onclick="loadOrders()">Refresh</button><table><tbody id="orderRows"></tbody></table></div></div>
+const firebaseConfig = {
+  apiKey: "AIzaSyCit8HtwzTZGy0p8FqVKkisVKv_SOIWMfs",
+  authDomain: "grace-radio-b03e6.firebaseapp.com",
+  databaseURL: "https://grace-radio-b03e6-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "grace-radio-b03e6",
+  storageBucket: "grace-radio-b03e6.firebasestorage.app",
+  messagingSenderId: "975079580816",
+  appId: "1:975079580816:web:c906d0c36ca8548315a415"
+};
 
-<div id="radio" class="view hidden"><div class="card"><h2>Radio Settings</h2>
-<input id="rn" placeholder="Station name"><input id="rt" placeholder="Tagline"><input id="rs" placeholder="Stream URL"><input id="re" placeholder="Email"><input id="rp" placeholder="Phone">
-<button onclick="saveRadio()">Save</button><div id="rm" class="msg"></div></div></div>
-</section></main>
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-<script>
-const URL="https://ilmnffzfjkmmrqoabpej.supabase.co";
-const KEY="sb_publishable_nr2is68lmfKL49JRHN32EA_FwBuQyjH";
-const sb=supabase.createClient(URL,KEY);
-const $=x=>document.getElementById(x);
-function m(id,t,ok=false){$(id).textContent=t;$(id).className="msg "+(ok?"ok":"err")}
-async function login(){try{m("loginMsg","Signing in...");const {error}=await sb.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error){m("loginMsg",error.message);return}m("loginMsg","Login successful",true);await init()}catch(e){m("loginMsg",e.message)}}
-async function logout(){await sb.auth.signOut();location.reload()}
-async function init(){let {data:{user}}=await sb.auth.getUser();if(!user)return;let {data:p,error}=await sb.from("profiles").select("role").eq("id",user.id).single();if(error||!p||p.role!=="admin"){await sb.auth.signOut();m("loginMsg","This account is not an administrator.");return}$("login").classList.add("hidden");$("panel").classList.remove("hidden");loadDash();loadRadio()}
-function tab(id){document.querySelectorAll(".view").forEach(x=>x.classList.add("hidden"));$(id).classList.remove("hidden");if(id==="programs")loadPrograms();if(id==="orders")loadOrders()}
-async function count(t,id){const {count,error}=await sb.from(t).select("*",{count:"exact",head:true});$(id).textContent=error?0:(count??0)}
-function loadDash(){count("programs","c1");count("podcasts","c2");count("ebooks","c3");count("orders","c4")}
-const days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-async function loadPrograms(){let {data}=await sb.from("programs").select("day_of_week,start_time,end_time,title").order("day_of_week").order("start_time");$("programRows").innerHTML="<tr><th>Day</th><th>Time</th><th>Program</th></tr>"+(data||[]).map(p=>"<tr><td>"+days[p.day_of_week]+"</td><td>"+p.start_time.slice(0,5)+" - "+p.end_time.slice(0,5)+"</td><td>"+esc(p.title)+"</td></tr>").join("")}
-function esc(s){return String(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
-async function up(bucket,path,file){if(!file)throw Error("File required");let {error}=await sb.storage.from(bucket).upload(path,file,{upsert:true,cacheControl:"3600"});if(error)throw error}
-async function uploadPodcast(){try{let title=$("pt").value.trim(),f=$("pa").files[0];if(!title||!f)throw Error("Title and audio are required");let id=crypto.randomUUID(),path=id+"/"+f.name;await up("podcasts",path,f);let cover=null,i=$("pi").files[0];if(i){let cp=id+"/"+i.name;await up("covers",cp,i);cover=sb.storage.from("covers").getPublicUrl(cp).data.publicUrl}let {error}=await sb.from("podcasts").insert({title,category:$("pc").value,description:$("pd").value,audio_path:path,cover_url:cover,published:true,published_at:new Date().toISOString()});if(error)throw error;m("pm","Podcast published",true);loadDash()}catch(e){m("pm",e.message)}}
-async function uploadBook(){try{let title=$("bt").value.trim(),f=$("bf").files[0];if(!title||!f)throw Error("Title and e-book file are required");let id=crypto.randomUUID(),path=id+"/"+f.name;await up("ebooks",path,f);let cover=null,i=$("bi").files[0];if(i){let cp=id+"/"+i.name;await up("covers",cp,i);cover=sb.storage.from("covers").getPublicUrl(cp).data.publicUrl}let {error}=await sb.from("ebooks").insert({title,author:$("ba").value,description:$("bd").value,price_kes:Number($("bp").value||0),file_path:path,cover_url:cover,published:true});if(error)throw error;m("bm","E-book published; file remains private.",true);loadDash()}catch(e){m("bm",e.message)}}
-async function uploadAd(){try{let f=$("ai").files[0];if(!$("at").value||!f)throw Error("Title and image required");let path=crypto.randomUUID()+"-"+f.name;await up("advertisements",path,f);let url=sb.storage.from("advertisements").getPublicUrl(path).data.publicUrl;let {error}=await sb.from("advertisements").insert({title:$("at").value,image_url:url,target_url:$("au").value,active:true});if(error)throw error;m("am","Advertisement published",true)}catch(e){m("am",e.message)}}
-async function sendNotification(){let {error}=await sb.from("notifications").insert({title:$("nt").value,body:$("nb").value,target_screen:$("ns").value,published:true,published_at:new Date().toISOString()});if(error)m("nm",error.message);else m("nm","Notification saved",true)}
-async function loadOrders(){let {data}=await sb.from("orders").select("created_at,total_kes,status,payment_reference").order("created_at",{ascending:false});$("orderRows").innerHTML="<tr><th>Date</th><th>Amount</th><th>Status</th><th>Payment</th></tr>"+(data||[]).map(o=>"<tr><td>"+new Date(o.created_at).toLocaleString()+"</td><td>KES "+Number(o.total_kes).toLocaleString()+"</td><td>"+esc(o.status)+"</td><td>"+esc(o.payment_reference||"-")+"</td></tr>").join("")}
-async function loadRadio(){let {data}=await sb.from("station_settings").select("*").limit(1).single();if(!data)return;$("rn").value=data.station_name||"";$("rt").value=data.tagline||"";$("rs").value=data.stream_url||"";$("re").value=data.contact_email||"";$("rp").value=data.contact_phone||""}
-async function saveRadio(){const {data,error:getErr}=await sb.from("station_settings").select("id").limit(1).single();if(getErr){m("rm",getErr.message);return}const {error}=await sb.from("station_settings").update({station_name:$("rn").value,tagline:$("rt").value,stream_url:$("rs").value,contact_email:$("re").value,contact_phone:$("rp").value,updated_at:new Date().toISOString()}).eq("id",data.id);if(error)m("rm",error.message);else m("rm","Saved",true)}
-window.addEventListener("load",async()=>{const {data:{session}}=await sb.auth.getSession();if(session)await init();});</script></body></html>
+window.login = async () => {
+
+  try {
+
+    await signInWithEmailAndPassword(
+      auth,
+      document.getElementById("email").value,
+      document.getElementById("password").value
+    );
+
+    document.getElementById("msg").innerHTML =
+      "✅ Login successful";
+
+  } catch (e) {
+
+    document.getElementById("msg").innerHTML =
+      "❌ " + e.message;
+
+  }
+
+};
+
+</script>
+
+</body>
+</html>
+```
