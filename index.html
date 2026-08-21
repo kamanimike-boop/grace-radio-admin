@@ -1,67 +1,2028 @@
-```html
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Grace Radio Firebase Test</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grace Radio Admin</title>
+
+  <style>
+    :root {
+      --primary: #6d28d9;
+      --primary-dark: #4c1d95;
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --border: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+    }
+
+    /* ================= LOGIN ================= */
+
+    #loginPage {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #4c1d95, #7c3aed);
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      border-radius: 18px;
+      padding: 35px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.2);
+    }
+
+    .login-card h1 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .login-card p {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 25px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .field textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--primary);
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: white;
+      font-weight: bold;
+    }
+
+    .primary-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .error {
+      color: var(--danger);
+      margin-top: 12px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    /* ================= ADMIN ================= */
+
+    #adminApp {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 250px;
+      height: 100vh;
+      background: #1f1147;
+      color: white;
+      padding: 20px 12px;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .brand {
+      padding: 10px 12px 25px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .brand small {
+      display: block;
+      color: #c4b5fd;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      padding: 13px 14px;
+      margin-bottom: 5px;
+      border-radius: 9px;
+      background: transparent;
+      color: #ddd6fe;
+      text-align: left;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: #6d28d9;
+      color: white;
+    }
+
+    .logout-btn {
+      margin-top: 20px;
+      background: #991b1b;
+      color: white;
+    }
+
+    .main {
+      margin-left: 250px;
+      padding: 25px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: var(--primary);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 8px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .page h2 {
+      margin-bottom: 20px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 18px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 22px;
+      border-radius: 14px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.05);
+    }
+
+    .stat-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 30px;
+      margin-top: 8px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.05);
+    }
+
+    .card h3 {
+      margin-bottom: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .save-btn {
+      background: var(--primary);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 9px;
+      margin-top: 8px;
+    }
+
+    .items {
+      display: grid;
+      gap: 12px;
+    }
+
+    .item {
+      border: 1px solid var(--border);
+      padding: 15px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      align-items: flex-start;
+    }
+
+    .item h4 {
+      margin-bottom: 6px;
+    }
+
+    .item p {
+      color: var(--muted);
+      font-size: 14px;
+      word-break: break-word;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .edit-btn,
+    .delete-btn {
+      padding: 8px 10px;
+      border-radius: 7px;
+      color: white;
+    }
+
+    .edit-btn {
+      background: #2563eb;
+    }
+
+    .delete-btn {
+      background: var(--danger);
+    }
+
+    .empty {
+      color: var(--muted);
+      padding: 15px 0;
+    }
+
+    .success-message {
+      color: var(--success);
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    /* ================= MOBILE ================= */
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: .25s;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 18px;
+      }
+
+      .menu-toggle {
+        display: inline-block;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      .item {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>Grace Radio Admin Login Test</h2>
+  <!-- LOGIN -->
 
-<input id="email" type="email" placeholder="Email">
-<br><br>
+  <section id="loginPage">
+    <div class="login-card">
+      <h1>Grace Radio</h1>
+      <p>Administrator Login</p>
 
-<input id="password" type="password" placeholder="Password">
-<br><br>
+      <form id="loginForm">
+        <div class="field">
+          <label>Email</label>
+          <input
+            type="email"
+            id="loginEmail"
+            placeholder="admin@example.com"
+            required
+          />
+        </div>
 
-<button onclick="login()">Login</button>
+        <div class="field">
+          <label>Password</label>
+          <input
+            type="password"
+            id="loginPassword"
+            placeholder="Enter password"
+            required
+          />
+        </div>
 
-<p id="msg"></p>
+        <button class="primary-btn" type="submit">
+          Login
+        </button>
 
-<script type="module">
+        <div id="loginError" class="error"></div>
+      </form>
+    </div>
+  </section>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword }
-from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCit8HtwzTZGy0p8FqVKkisVKv_SOIWMfs",
-  authDomain: "grace-radio-b03e6.firebaseapp.com",
-  databaseURL: "https://grace-radio-b03e6-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "grace-radio-b03e6",
-  storageBucket: "grace-radio-b03e6.firebasestorage.app",
-  messagingSenderId: "975079580816",
-  appId: "1:975079580816:web:c906d0c36ca8548315a415"
-};
+  <!-- ADMIN APP -->
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+  <section id="adminApp">
 
-window.login = async () => {
+    <aside class="sidebar" id="sidebar">
 
-  try {
+      <div class="brand">
+        Grace Radio
+        <small>Admin Panel</small>
+      </div>
 
-    await signInWithEmailAndPassword(
-      auth,
-      document.getElementById("email").value,
-      document.getElementById("password").value
-    );
+      <button class="nav-btn active" data-page="dashboard">
+        Dashboard
+      </button>
 
-    document.getElementById("msg").innerHTML =
-      "✅ Login successful";
+      <button class="nav-btn" data-page="programs">
+        Programs
+      </button>
 
-  } catch (e) {
+      <button class="nav-btn" data-page="podcasts">
+        Podcasts
+      </button>
 
-    document.getElementById("msg").innerHTML =
-      "❌ " + e.message;
+      <button class="nav-btn" data-page="ebooks">
+        E-books
+      </button>
 
-  }
+      <button class="nav-btn" data-page="advertisements">
+        Advertisements
+      </button>
 
-};
+      <button class="nav-btn" data-page="notifications">
+        Notifications
+      </button>
 
-</script>
+      <button class="nav-btn" data-page="orders">
+        Orders
+      </button>
+
+      <button class="nav-btn" data-page="radio">
+        Radio Settings
+      </button>
+
+      <button class="nav-btn logout-btn" id="logoutBtn">
+        Logout
+      </button>
+
+    </aside>
+
+
+    <main class="main">
+
+      <div class="topbar">
+        <button class="menu-toggle" id="menuToggle">
+          ☰ Menu
+        </button>
+
+        <div id="adminEmail"></div>
+      </div>
+
+
+      <!-- DASHBOARD -->
+
+      <section class="page active" id="dashboard">
+        <h2>Dashboard</h2>
+
+        <div class="stats">
+          <div class="stat-card">
+            <span>Programs</span>
+            <strong id="programCount">0</strong>
+          </div>
+
+          <div class="stat-card">
+            <span>Podcasts</span>
+            <strong id="podcastCount">0</strong>
+          </div>
+
+          <div class="stat-card">
+            <span>E-books</span>
+            <strong id="ebookCount">0</strong>
+          </div>
+
+          <div class="stat-card">
+            <span>Orders</span>
+            <strong id="orderCount">0</strong>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- PROGRAMS -->
+
+      <section class="page" id="programs">
+
+        <h2>Programs</h2>
+
+        <div class="card">
+
+          <h3>Add / Edit Program</h3>
+
+          <form id="programForm">
+
+            <input type="hidden" id="programId" />
+
+            <div class="form-grid">
+
+              <div class="field">
+                <label>Program Name</label>
+                <input type="text" id="programName" required />
+              </div>
+
+              <div class="field">
+                <label>Presenter</label>
+                <input type="text" id="programPresenter" />
+              </div>
+
+              <div class="field">
+                <label>Time</label>
+                <input type="text" id="programTime" placeholder="8:00 AM - 10:00 AM" />
+              </div>
+
+              <div class="field">
+                <label>Day</label>
+                <input type="text" id="programDay" placeholder="Monday" />
+              </div>
+
+              <div class="field full">
+                <label>Description</label>
+                <textarea id="programDescription"></textarea>
+              </div>
+
+            </div>
+
+            <button class="save-btn" type="submit">
+              Save Program
+            </button>
+
+          </form>
+
+        </div>
+
+        <div class="card">
+          <h3>All Programs</h3>
+          <div class="items" id="programList"></div>
+        </div>
+
+      </section>
+
+
+      <!-- PODCASTS -->
+
+      <section class="page" id="podcasts">
+
+        <h2>Podcasts</h2>
+
+        <div class="card">
+
+          <h3>Add / Edit Podcast</h3>
+
+          <form id="podcastForm">
+
+            <input type="hidden" id="podcastId" />
+
+            <div class="form-grid">
+
+              <div class="field">
+                <label>Title</label>
+                <input type="text" id="podcastTitle" required />
+              </div>
+
+              <div class="field">
+                <label>Speaker</label>
+                <input type="text" id="podcastSpeaker" />
+              </div>
+
+              <div class="field full">
+                <label>Audio URL</label>
+                <input type="url" id="podcastAudioUrl" />
+              </div>
+
+              <div class="field full">
+                <label>Description</label>
+                <textarea id="podcastDescription"></textarea>
+              </div>
+
+            </div>
+
+            <button class="save-btn" type="submit">
+              Save Podcast
+            </button>
+
+          </form>
+
+        </div>
+
+        <div class="card">
+          <h3>All Podcasts</h3>
+          <div class="items" id="podcastList"></div>
+        </div>
+
+      </section>
+
+
+      <!-- EBOOKS -->
+
+      <section class="page" id="ebooks">
+
+        <h2>E-books</h2>
+
+        <div class="card">
+
+          <h3>Add / Edit E-book</h3>
+
+          <form id="ebookForm">
+
+            <input type="hidden" id="ebookId" />
+
+            <div class="form-grid">
+
+              <div class="field">
+                <label>Book Title</label>
+                <input type="text" id="ebookTitle" required />
+              </div>
+
+              <div class="field">
+                <label>Author</label>
+                <input type="text" id="ebookAuthor" />
+              </div>
+
+              <div class="field full">
+                <label>Cover Image URL</label>
+                <input type="url" id="ebookCoverUrl" />
+              </div>
+
+              <div class="field full">
+                <label>PDF / Book URL</label>
+                <input type="url" id="ebookFileUrl" />
+              </div>
+
+              <div class="field full">
+                <label>Description</label>
+                <textarea id="ebookDescription"></textarea>
+              </div>
+
+            </div>
+
+            <button class="save-btn" type="submit">
+              Save E-book
+            </button>
+
+          </form>
+
+        </div>
+
+        <div class="card">
+          <h3>All E-books</h3>
+          <div class="items" id="ebookList"></div>
+        </div>
+
+      </section>
+
+
+      <!-- ADVERTISEMENTS -->
+
+      <section class="page" id="advertisements">
+
+        <h2>Advertisements</h2>
+
+        <div class="card">
+
+          <h3>Add / Edit Advertisement</h3>
+
+          <form id="advertForm">
+
+            <input type="hidden" id="advertId" />
+
+            <div class="form-grid">
+
+              <div class="field">
+                <label>Title</label>
+                <input type="text" id="advertTitle" required />
+              </div>
+
+              <div class="field">
+                <label>Advertiser</label>
+                <input type="text" id="advertiserName" />
+              </div>
+
+              <div class="field full">
+                <label>Image URL</label>
+                <input type="url" id="advertImageUrl" />
+              </div>
+
+              <div class="field full">
+                <label>Target Link</label>
+                <input type="url" id="advertLink" />
+              </div>
+
+            </div>
+
+            <button class="save-btn" type="submit">
+              Save Advertisement
+            </button>
+
+          </form>
+
+        </div>
+
+        <div class="card">
+          <h3>All Advertisements</h3>
+          <div class="items" id="advertList"></div>
+        </div>
+
+      </section>
+
+
+      <!-- NOTIFICATIONS -->
+
+      <section class="page" id="notifications">
+
+        <h2>Notifications</h2>
+
+        <div class="card">
+
+          <h3>Create Notification</h3>
+
+          <form id="notificationForm">
+
+            <div class="form-grid">
+
+              <div class="field full">
+                <label>Title</label>
+                <input type="text" id="notificationTitle" required />
+              </div>
+
+              <div class="field full">
+                <label>Message</label>
+                <textarea id="notificationMessage" required></textarea>
+              </div>
+
+            </div>
+
+            <button class="save-btn" type="submit">
+              Publish Notification
+            </button>
+
+          </form>
+
+        </div>
+
+        <div class="card">
+          <h3>Notification History</h3>
+          <div class="items" id="notificationList"></div>
+        </div>
+
+      </section>
+
+
+      <!-- ORDERS -->
+
+      <section class="page" id="orders">
+
+        <h2>Orders</h2>
+
+        <div class="card">
+          <h3>Customer Orders</h3>
+          <div class="items" id="orderList"></div>
+        </div>
+
+      </section>
+
+
+      <!-- RADIO SETTINGS -->
+
+      <section class="page" id="radio">
+
+        <h2>Radio Settings</h2>
+
+        <div class="card">
+
+          <h3>Live Radio Configuration</h3>
+
+          <form id="radioForm">
+
+            <div class="form-grid">
+
+              <div class="field">
+                <label>Station Name</label>
+                <input type="text" id="stationName" />
+              </div>
+
+              <div class="field">
+                <label>Station Slogan</label>
+                <input type="text" id="stationSlogan" />
+              </div>
+
+              <div class="field full">
+                <label>Live Stream URL</label>
+                <input type="url" id="streamUrl" />
+              </div>
+
+              <div class="field full">
+                <label>Station Description</label>
+                <textarea id="stationDescription"></textarea>
+              </div>
+
+            </div>
+
+            <button class="save-btn" type="submit">
+              Save Radio Settings
+            </button>
+
+            <div class="success-message" id="radioSuccess"></div>
+
+          </form>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </section>
+
+
+  <script type="module">
+
+    import { initializeApp } from
+      "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from
+      "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    import {
+      getDatabase,
+      ref,
+      push,
+      set,
+      update,
+      remove,
+      onValue
+    } from
+      "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+    /* ================= FIREBASE CONFIG ================= */
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCit8HtwzTZGy0p8FqVKkisVKv_SOIWMfs",
+      authDomain: "grace-radio-b03e6.firebaseapp.com",
+      databaseURL:
+        "https://grace-radio-b03e6-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "grace-radio-b03e6",
+      storageBucket: "grace-radio-b03e6.firebasestorage.app",
+      messagingSenderId: "975079580816",
+      appId: "1:975079580816:web:c906d0c36ca8548315a415"
+    };
+
+
+    /* ================= INITIALIZE FIREBASE ================= */
+
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+    const db = getDatabase(app);
+
+
+    /* ================= DOM ================= */
+
+    const loginPage = document.getElementById("loginPage");
+
+    const adminApp = document.getElementById("adminApp");
+
+    const loginForm = document.getElementById("loginForm");
+
+    const loginEmail = document.getElementById("loginEmail");
+
+    const loginPassword =
+      document.getElementById("loginPassword");
+
+    const loginError =
+      document.getElementById("loginError");
+
+    const adminEmail =
+      document.getElementById("adminEmail");
+
+
+    /* ================= AUTH ================= */
+
+    loginForm.addEventListener("submit", async (event) => {
+
+      event.preventDefault();
+
+      loginError.textContent = "";
+
+      try {
+
+        await signInWithEmailAndPassword(
+
+          auth,
+
+          loginEmail.value.trim(),
+
+          loginPassword.value
+
+        );
+
+      } catch (error) {
+
+        loginError.textContent =
+          "Login failed: " + error.message;
+
+      }
+
+    });
+
+
+    onAuthStateChanged(auth, (user) => {
+
+      if (user) {
+
+        loginPage.style.display = "none";
+
+        adminApp.style.display = "block";
+
+        adminEmail.textContent = user.email;
+
+        startDatabaseListeners();
+
+      } else {
+
+        loginPage.style.display = "flex";
+
+        adminApp.style.display = "none";
+
+      }
+
+    });
+
+
+    document
+      .getElementById("logoutBtn")
+      .addEventListener("click", async () => {
+
+        await signOut(auth);
+
+      });
+
+
+    /* ================= NAVIGATION ================= */
+
+    const navButtons =
+      document.querySelectorAll(".nav-btn[data-page]");
+
+    const pages =
+      document.querySelectorAll(".page");
+
+    navButtons.forEach((button) => {
+
+      button.addEventListener("click", () => {
+
+        const pageName =
+          button.dataset.page;
+
+        pages.forEach((page) => {
+
+          page.classList.remove("active");
+
+        });
+
+        navButtons.forEach((nav) => {
+
+          nav.classList.remove("active");
+
+        });
+
+        document
+          .getElementById(pageName)
+          .classList.add("active");
+
+        button.classList.add("active");
+
+        document
+          .getElementById("sidebar")
+          .classList.remove("open");
+
+      });
+
+    });
+
+
+    document
+      .getElementById("menuToggle")
+      .addEventListener("click", () => {
+
+        document
+          .getElementById("sidebar")
+          .classList.toggle("open");
+
+      });
+
+
+    /* ================= HELPERS ================= */
+
+    function getFormValues(fields) {
+
+      const data = {};
+
+      fields.forEach((field) => {
+
+        data[field] =
+          document.getElementById(field).value.trim();
+
+      });
+
+      return data;
+
+    }
+
+
+    function clearFields(fields) {
+
+      fields.forEach((field) => {
+
+        document.getElementById(field).value = "";
+
+      });
+
+    }
+
+
+    function escapeHtml(value) {
+
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* ================= PROGRAMS ================= */
+
+    const programFields = [
+
+      "programName",
+      "programPresenter",
+      "programTime",
+      "programDay",
+      "programDescription"
+
+    ];
+
+
+    document
+      .getElementById("programForm")
+      .addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const id =
+          document.getElementById("programId").value;
+
+        const data =
+          getFormValues(programFields);
+
+        data.createdAt =
+          Date.now();
+
+        if (id) {
+
+          await update(
+
+            ref(db, "programs/" + id),
+
+            data
+
+          );
+
+        } else {
+
+          const newRef =
+            push(ref(db, "programs"));
+
+          await set(newRef, data);
+
+        }
+
+        clearFields(programFields);
+
+        document
+          .getElementById("programId")
+          .value = "";
+
+      });
+
+
+    function loadPrograms() {
+
+      onValue(ref(db, "programs"), (snapshot) => {
+
+        const list =
+          document.getElementById("programList");
+
+        list.innerHTML = "";
+
+        const data =
+          snapshot.val();
+
+        const count =
+          data ? Object.keys(data).length : 0;
+
+        document
+          .getElementById("programCount")
+          .textContent = count;
+
+        if (!data) {
+
+          list.innerHTML =
+            '<div class="empty">No programs found.</div>';
+
+          return;
+
+        }
+
+        Object.entries(data).forEach(([id, item]) => {
+
+          const div =
+            document.createElement("div");
+
+          div.className = "item";
+
+          div.innerHTML = `
+
+            <div>
+
+              <h4>
+                ${escapeHtml(item.programName)}
+              </h4>
+
+              <p>
+                ${escapeHtml(item.programPresenter)}
+              </p>
+
+              <p>
+                ${escapeHtml(item.programDay)}
+                -
+                ${escapeHtml(item.programTime)}
+              </p>
+
+              <p>
+                ${escapeHtml(item.programDescription)}
+              </p>
+
+            </div>
+
+            <div class="item-actions">
+
+              <button
+                class="edit-btn"
+                data-id="${id}"
+              >
+                Edit
+              </button>
+
+              <button
+                class="delete-btn"
+                data-id="${id}"
+              >
+                Delete
+              </button>
+
+            </div>
+
+          `;
+
+          div
+            .querySelector(".edit-btn")
+            .addEventListener("click", () => {
+
+              document
+                .getElementById("programId")
+                .value = id;
+
+              programFields.forEach((field) => {
+
+                document
+                  .getElementById(field)
+                  .value = item[field] || "";
+
+              });
+
+              document
+                .getElementById("programs")
+                .scrollIntoView({
+                  behavior: "smooth"
+                });
+
+            });
+
+
+          div
+            .querySelector(".delete-btn")
+            .addEventListener("click", async () => {
+
+              if (
+                confirm(
+                  "Delete this program?"
+                )
+              ) {
+
+                await remove(
+                  ref(db, "programs/" + id)
+                );
+
+              }
+
+            });
+
+          list.appendChild(div);
+
+        });
+
+      });
+
+    }
+
+
+    /* ================= PODCASTS ================= */
+
+    const podcastFields = [
+
+      "podcastTitle",
+      "podcastSpeaker",
+      "podcastAudioUrl",
+      "podcastDescription"
+
+    ];
+
+
+    document
+      .getElementById("podcastForm")
+      .addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const id =
+          document.getElementById("podcastId").value;
+
+        const data =
+          getFormValues(podcastFields);
+
+        data.createdAt =
+          Date.now();
+
+        if (id) {
+
+          await update(
+            ref(db, "podcasts/" + id),
+            data
+          );
+
+        } else {
+
+          const newRef =
+            push(ref(db, "podcasts"));
+
+          await set(newRef, data);
+
+        }
+
+        clearFields(podcastFields);
+
+        document
+          .getElementById("podcastId")
+          .value = "";
+
+      });
+
+
+    function loadPodcasts() {
+
+      onValue(ref(db, "podcasts"), (snapshot) => {
+
+        const list =
+          document.getElementById("podcastList");
+
+        list.innerHTML = "";
+
+        const data =
+          snapshot.val();
+
+        document
+          .getElementById("podcastCount")
+          .textContent =
+          data ? Object.keys(data).length : 0;
+
+        if (!data) {
+
+          list.innerHTML =
+            '<div class="empty">No podcasts found.</div>';
+
+          return;
+
+        }
+
+        Object.entries(data).forEach(([id, item]) => {
+
+          const div =
+            document.createElement("div");
+
+          div.className = "item";
+
+          div.innerHTML = `
+
+            <div>
+
+              <h4>
+                ${escapeHtml(item.podcastTitle)}
+              </h4>
+
+              <p>
+                Speaker:
+                ${escapeHtml(item.podcastSpeaker)}
+              </p>
+
+              <p>
+                ${escapeHtml(item.podcastDescription)}
+              </p>
+
+            </div>
+
+            <div class="item-actions">
+
+              <button
+                class="edit-btn"
+              >
+                Edit
+              </button>
+
+              <button
+                class="delete-btn"
+              >
+                Delete
+              </button>
+
+            </div>
+
+          `;
+
+          div
+            .querySelector(".edit-btn")
+            .addEventListener("click", () => {
+
+              document
+                .getElementById("podcastId")
+                .value = id;
+
+              podcastFields.forEach((field) => {
+
+                document
+                  .getElementById(field)
+                  .value = item[field] || "";
+
+              });
+
+            });
+
+
+          div
+            .querySelector(".delete-btn")
+            .addEventListener("click", async () => {
+
+              if (
+                confirm(
+                  "Delete this podcast?"
+                )
+              ) {
+
+                await remove(
+                  ref(db, "podcasts/" + id)
+                );
+
+              }
+
+            });
+
+          list.appendChild(div);
+
+        });
+
+      });
+
+    }
+
+
+    /* ================= EBOOKS ================= */
+
+    const ebookFields = [
+
+      "ebookTitle",
+      "ebookAuthor",
+      "ebookCoverUrl",
+      "ebookFileUrl",
+      "ebookDescription"
+
+    ];
+
+
+    document
+      .getElementById("ebookForm")
+      .addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const id =
+          document.getElementById("ebookId").value;
+
+        const data =
+          getFormValues(ebookFields);
+
+        data.createdAt =
+          Date.now();
+
+        if (id) {
+
+          await update(
+            ref(db, "ebooks/" + id),
+            data
+          );
+
+        } else {
+
+          const newRef =
+            push(ref(db, "ebooks"));
+
+          await set(newRef, data);
+
+        }
+
+        clearFields(ebookFields);
+
+        document
+          .getElementById("ebookId")
+          .value = "";
+
+      });
+
+
+    function loadEbooks() {
+
+      onValue(ref(db, "ebooks"), (snapshot) => {
+
+        const list =
+          document.getElementById("ebookList");
+
+        list.innerHTML = "";
+
+        const data =
+          snapshot.val();
+
+        document
+          .getElementById("ebookCount")
+          .textContent =
+          data ? Object.keys(data).length : 0;
+
+        if (!data) {
+
+          list.innerHTML =
+            '<div class="empty">No e-books found.</div>';
+
+          return;
+
+        }
+
+        Object.entries(data).forEach(([id, item]) => {
+
+          const div =
+            document.createElement("div");
+
+          div.className = "item";
+
+          div.innerHTML = `
+
+            <div>
+
+              <h4>
+                ${escapeHtml(item.ebookTitle)}
+              </h4>
+
+              <p>
+                ${escapeHtml(item.ebookAuthor)}
+              </p>
+
+              <p>
+                ${escapeHtml(item.ebookDescription)}
+              </p>
+
+            </div>
+
+            <div class="item-actions">
+
+              <button class="edit-btn">
+                Edit
+              </button>
+
+              <button class="delete-btn">
+                Delete
+              </button>
+
+            </div>
+
+          `;
+
+          div
+            .querySelector(".edit-btn")
+            .addEventListener("click", () => {
+
+              document
+                .getElementById("ebookId")
+                .value = id;
+
+              ebookFields.forEach((field) => {
+
+                document
+                  .getElementById(field)
+                  .value = item[field] || "";
+
+              });
+
+            });
+
+
+          div
+            .querySelector(".delete-btn")
+            .addEventListener("click", async () => {
+
+              if (
+                confirm(
+                  "Delete this e-book?"
+                )
+              ) {
+
+                await remove(
+                  ref(db, "ebooks/" + id)
+                );
+
+              }
+
+            });
+
+          list.appendChild(div);
+
+        });
+
+      });
+
+    }
+
+
+    /* ================= ADVERTISEMENTS ================= */
+
+    const advertFields = [
+
+      "advertTitle",
+      "advertiserName",
+      "advertImageUrl",
+      "advertLink"
+
+    ];
+
+
+    document
+      .getElementById("advertForm")
+      .addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const id =
+          document.getElementById("advertId").value;
+
+        const data =
+          getFormValues(advertFields);
+
+        data.createdAt =
+          Date.now();
+
+        if (id) {
+
+          await update(
+            ref(db, "advertisements/" + id),
+            data
+          );
+
+        } else {
+
+          const newRef =
+            push(ref(db, "advertisements"));
+
+          await set(newRef, data);
+
+        }
+
+        clearFields(advertFields);
+
+        document
+          .getElementById("advertId")
+          .value = "";
+
+      });
+
+
+    function loadAdvertisements() {
+
+      onValue(
+        ref(db, "advertisements"),
+        (snapshot) => {
+
+          const list =
+            document.getElementById("advertList");
+
+          list.innerHTML = "";
+
+          const data =
+            snapshot.val();
+
+          if (!data) {
+
+            list.innerHTML =
+              '<div class="empty">No advertisements found.</div>';
+
+            return;
+
+          }
+
+          Object.entries(data)
+            .forEach(([id, item]) => {
+
+              const div =
+                document.createElement("div");
+
+              div.className = "item";
+
+              div.innerHTML = `
+
+                <div>
+
+                  <h4>
+                    ${escapeHtml(item.advertTitle)}
+                  </h4>
+
+                  <p>
+                    ${escapeHtml(item.advertiserName)}
+                  </p>
+
+                  <p>
+                    ${escapeHtml(item.advertLink)}
+                  </p>
+
+                </div>
+
+                <div class="item-actions">
+
+                  <button class="edit-btn">
+                    Edit
+                  </button>
+
+                  <button class="delete-btn">
+                    Delete
+                  </button>
+
+                </div>
+
+              `;
+
+              div
+                .querySelector(".edit-btn")
+                .addEventListener("click", () => {
+
+                  document
+                    .getElementById("advertId")
+                    .value = id;
+
+                  advertFields.forEach((field) => {
+
+                    document
+                      .getElementById(field)
+                      .value =
+                      item[field] || "";
+
+                  });
+
+                });
+
+
+              div
+                .querySelector(".delete-btn")
+                .addEventListener("click", async () => {
+
+                  if (
+                    confirm(
+                      "Delete this advertisement?"
+                    )
+                  ) {
+
+                    await remove(
+                      ref(
+                        db,
+                        "advertisements/" + id
+                      )
+                    );
+
+                  }
+
+                });
+
+              list.appendChild(div);
+
+            });
+
+        }
+      );
+
+    }
+
+
+    /* ================= NOTIFICATIONS ================= */
+
+    document
+      .getElementById("notificationForm")
+      .addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const title =
+          document
+            .getElementById("notificationTitle")
+            .value
+            .trim();
+
+        const message =
+          document
+            .getElementById("notificationMessage")
+            .value
+            .trim();
+
+        const newRef =
+          push(ref(db, "notifications"));
+
+        await set(newRef, {
+
+          title,
+          message,
+
+          createdAt:
+            Date.now()
+
+        });
+
+        document
+          .getElementById("notificationForm")
+          .reset();
+
+      });
+
+
+    function loadNotifications() {
+
+      onValue(
+        ref(db, "notifications"),
+        (snapshot) => {
+
+          const list =
+            document
+              .getElementById(
+                "notificationList"
+              );
+
+          list.innerHTML = "";
+
+          const data =
+            snapshot.val();
+
+          if (!data) {
+
+            list.innerHTML =
+              '<div class="empty">No notifications yet.</div>';
+
+            return;
+
+          }
+
+          Object.entries(data)
+            .reverse()
+            .forEach(([id, item]) => {
+
+              const div =
+                document.createElement("div");
+
+              div.className = "item";
+
+              div.innerHTML = `
+
+                <div>
+
+                  <h4>
+                    ${escapeHtml(item.title)}
+                  </h4>
+
+                  <p>
+                    ${escapeHtml(item.message)}
+                  </p>
+
+                </div>
+
+                <div class="item-actions">
+
+                  <button class="delete-btn">
+                    Delete
+                  </button>
+
+                </div>
+
+              `;
+
+              div
+                .querySelector(".delete-btn")
+                .addEventListener("click", async () => {
+
+                  if (
+                    confirm(
+                      "Delete this notification?"
+                    )
+                  ) {
+
+                    await remove(
+                      ref(
+                        db,
+                        "notifications/" + id
+                      )
+                    );
+
+                  }
+
+                });
+
+              list.appendChild(div);
+
+            });
+
+        }
+      );
+
+    }
+
+
+    /* ================= ORDERS ================= */
+
+    function loadOrders() {
+
+      onValue(
+        ref(db, "orders"),
+        (snapshot) => {
+
+          const list =
+            document
+              .getElementById("orderList");
+
+          list.innerHTML = "";
+
+          const data =
+            snapshot.val();
+
+          document
+            .getElementById("orderCount")
+            .textContent =
+            data ? Object.keys(data).length : 0;
+
+          if (!data) {
+
+            list.innerHTML =
+              '<div class="empty">No orders found.</div>';
+
+            return;
+
+          }
+
+          Object.entries(data)
+            .reverse()
+            .forEach(([id, item]) => {
+
+              const div =
+                document.createElement("div");
+
+              div.className = "item";
+
+              div.innerHTML = `
+
+                <div>
+
+                  <h4>
+                    Order #${escapeHtml(id)}
+                  </h4>
+
+                  <p>
+                    ${escapeHtml(
+                      JSON.stringify(item)
+                    )}
+                  </p>
+
+                </div>
+
+              `;
+
+              list.appendChild(div);
+
+            });
+
+        }
+      );
+
+    }
+
+
+    /* ================= RADIO SETTINGS ================= */
+
+    const radioFields = [
+
+      "stationName",
+      "stationSlogan",
+      "streamUrl",
+      "stationDescription"
+
+    ];
+
+
+    document
+      .getElementById("radioForm")
+      .addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const data =
+          getFormValues(radioFields);
+
+        await set(
+          ref(db, "radioSettings"),
+          data
+        );
+
+        document
+          .getElementById("radioSuccess")
+          .textContent =
+          "Radio settings saved successfully.";
+
+        setTimeout(() => {
+
+          document
+            .getElementById("radioSuccess")
+            .textContent = "";
+
+        }, 3000);
+
+      });
+
+
+    function loadRadioSettings() {
+
+      onValue(
+        ref(db, "radioSettings"),
+        (snapshot) => {
+
+          const data =
+            snapshot.val();
+
+          if (!data) return;
+
+          radioFields.forEach((field) => {
+
+            document
+              .getElementById(field)
+              .value =
+              data[field] || "";
+
+          });
+
+        }
+      );
+
+    }
+
+
+    /* ================= START DATABASE ================= */
+
+    let listenersStarted = false;
+
+    function startDatabaseListeners() {
+
+      if (listenersStarted) return;
+
+      listenersStarted = true;
+
+      loadPrograms();
+
+      loadPodcasts();
+
+      loadEbooks();
+
+      loadAdvertisements();
+
+      loadNotifications();
+
+      loadOrders();
+
+      loadRadioSettings();
+
+    }
+
+  </script>
 
 </body>
 </html>
-```
